@@ -27,5 +27,6 @@ jobs:
           github_token: ${{ secrets.github_token }}
           go_version: 1.23.0
           reporter: github-pr-review
+          workdir: src/
           level: warning
           golangci_lint_flags: "--config=.golangci.yml"
