@@ -29,4 +29,4 @@ jobs:
           reporter: github-pr-review
           workdir: src/
           level: warning
-          golangci_lint_flags: "--config=.golangci.yml"
+          golangci_lint_flags: "--config=../.golangci.yml"
