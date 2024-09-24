@@ -8,10 +8,10 @@ import (
 type IQuizUsecase interface {
 	GetFilteredQuizzes(filters []model.Filter) ([]model.QuizResponse, error)
 	CreateQuiz(quiz model.Quiz) (model.QuizResponse, error)
-	UpdateQuiz(quiz model.Quiz, quizId uint) (model.QuizResponse, error)
-	DeleteQuiz(quizId uint) error
-	GetQuizAnswer(quizId uint) (model.AnswerResponse, error)
-	CheckQuiz(quizId uint, ansX uint, ansY uint) (model.CheckResponse, error)
+	UpdateQuiz(quiz model.Quiz, quizID uint) (model.QuizResponse, error)
+	DeleteQuiz(quizID uint) error
+	GetQuizAnswer(quizID uint) (model.AnswerResponse, error)
+	CheckQuiz(quizID uint, ansX uint, ansY uint) (model.CheckResponse, error)
 }
 
 type quizUsecase struct {
@@ -53,8 +53,8 @@ func (qu *quizUsecase) CreateQuiz(quiz model.Quiz) (model.QuizResponse, error) {
 	return resQuiz, nil
 }
 
-func (qu *quizUsecase) UpdateQuiz(quiz model.Quiz, quizId uint) (model.QuizResponse, error) {
-	if err := qu.qr.UpdateQuiz(&quiz, quizId); err != nil {
+func (qu *quizUsecase) UpdateQuiz(quiz model.Quiz, quizID uint) (model.QuizResponse, error) {
+	if err := qu.qr.UpdateQuiz(&quiz, quizID); err != nil {
 		return model.QuizResponse{}, err
 	}
 
@@ -67,16 +67,16 @@ func (qu *quizUsecase) UpdateQuiz(quiz model.Quiz, quizId uint) (model.QuizRespo
 	return resQuiz, nil
 }
 
-func (qu *quizUsecase) DeleteQuiz(quizId uint) error {
-	if err := qu.qr.DeleteQuiz(quizId); err != nil {
+func (qu *quizUsecase) DeleteQuiz(quizID uint) error {
+	if err := qu.qr.DeleteQuiz(quizID); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (qu *quizUsecase) GetQuizAnswer(quizId uint) (model.AnswerResponse, error) {
+func (qu *quizUsecase) GetQuizAnswer(quizID uint) (model.AnswerResponse, error) {
 	quiz := model.Quiz{}
-	if err := qu.qr.GetQuizByID(&quiz, quizId); err != nil {
+	if err := qu.qr.GetQuizByID(&quiz, quizID); err != nil {
 		return model.AnswerResponse{}, err
 	}
 	resAns := model.AnswerResponse{
@@ -89,15 +89,15 @@ func (qu *quizUsecase) GetQuizAnswer(quizId uint) (model.AnswerResponse, error) 
 	return resAns, nil
 }
 
-func (qu *quizUsecase) CheckQuiz(quizId uint, ansX uint, ansY uint) (model.CheckResponse, error) {
+func (qu *quizUsecase) CheckQuiz(quizID uint, ansX uint, ansY uint) (model.CheckResponse, error) {
 	quiz := model.Quiz{}
-	if err := qu.qr.GetQuizByID(&quiz, quizId); err != nil {
+	if err := qu.qr.GetQuizByID(&quiz, quizID); err != nil {
 		return model.CheckResponse{}, err
 	}
 
 	if quiz.AnswerX == ansX && quiz.AnswerY == ansY {
-		return model.CheckResponse{ID: quizId, IsCorrect: true}, nil
+		return model.CheckResponse{ID: quizID, IsCorrect: true}, nil
 	}
 
-	return model.CheckResponse{ID: quizId, IsCorrect: false}, nil
+	return model.CheckResponse{ID: quizID, IsCorrect: false}, nil
 }

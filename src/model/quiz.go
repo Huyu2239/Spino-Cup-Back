@@ -20,8 +20,8 @@ func (sm StringMatrix) Value() (driver.Value, error) {
 
 type Quiz struct {
 	ID          uint         `json:"id" gorm:"primaryKey"`
-	UserId      uint         `json:"user_id" gorm:"not null"`
-	User        User         `json:"user" gorm:"foreignKey:UserId; constraint:OnDelete:CASCADE"`
+	UserID      uint         `json:"user_id" gorm:"not null"`
+	User        User         `json:"user" gorm:"foreignKey:UserID; constraint:OnDelete:CASCADE"`
 	Difficulty  string       `json:"difficulty"`                  //難易度
 	Language    string       `json:"language"`                    //クイズに使用されているプログラミング言語
 	Question    StringMatrix `json:"question" grom:"not null"`    //内容

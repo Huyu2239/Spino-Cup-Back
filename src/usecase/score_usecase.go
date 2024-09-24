@@ -8,7 +8,7 @@ import (
 type IScoreUsecase interface {
 	GetFilteredScores(filters []model.Filter) ([]model.ScoreResponse, error)
 	CreateScore(score model.Score) (model.ScoreResponse, error)
-	DeleteScore(scoreId uint) error
+	DeleteScore(scoreID uint) error
 }
 
 type scoreUsecase struct {
@@ -46,8 +46,8 @@ func (su *scoreUsecase) CreateScore(score model.Score) (model.ScoreResponse, err
 	return resScore, nil
 }
 
-func (su *scoreUsecase) DeleteScore(scoreId uint) error {
-	if err := su.sr.DeleteScore(scoreId); err != nil {
+func (su *scoreUsecase) DeleteScore(scoreID uint) error {
+	if err := su.sr.DeleteScore(scoreID); err != nil {
 		return err
 	}
 	return nil

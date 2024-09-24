@@ -11,7 +11,7 @@ import (
 type IScoreRepository interface {
 	GetFilteredScores(scores *[]model.Score, filters []model.Filter) error
 	CreateScore(score *model.Score) error
-	DeleteScore(scoreId uint) error
+	DeleteScore(scoreID uint) error
 }
 
 type scoreRepository struct {
@@ -44,8 +44,8 @@ func (sr *scoreRepository) CreateScore(score *model.Score) error {
 	return nil
 }
 
-func (sr *scoreRepository) DeleteScore(scoreId uint) error {
-	result := sr.db.Where("id=?", scoreId).Delete(&model.Score{})
+func (sr *scoreRepository) DeleteScore(scoreID uint) error {
+	result := sr.db.Where("id=?", scoreID).Delete(&model.Score{})
 	if result.Error != nil {
 		return result.Error
 	}

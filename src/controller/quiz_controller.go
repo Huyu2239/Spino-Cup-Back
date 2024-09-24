@@ -50,7 +50,7 @@ func (qc *quizController) CreateQuiz(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	quiz.UserId = c.Get("user").(model.UserResponse).ID
+	quiz.UserID = c.Get("user").(model.UserResponse).ID
 
 	quizRes, err := qc.qu.CreateQuiz(quiz)
 	if err != nil {
@@ -65,11 +65,11 @@ func (qc *quizController) UpdateQuiz(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	quiz.UserId = c.Get("user").(model.UserResponse).ID
+	quiz.UserID = c.Get("user").(model.UserResponse).ID
 
-	id := c.Param("quizId")
-	quizId, _ := strconv.Atoi(id)
-	quizRes, err := qc.qu.UpdateQuiz(quiz, uint(quizId))
+	id := c.Param("quizID")
+	quizID, _ := strconv.Atoi(id)
+	quizRes, err := qc.qu.UpdateQuiz(quiz, uint(quizID))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -77,9 +77,9 @@ func (qc *quizController) UpdateQuiz(c echo.Context) error {
 }
 
 func (qc *quizController) DeleteQuiz(c echo.Context) error {
-	id := c.Param("quizId")
-	quizId, _ := strconv.Atoi(id)
-	err := qc.qu.DeleteQuiz(uint(quizId))
+	id := c.Param("quizID")
+	quizID, _ := strconv.Atoi(id)
+	err := qc.qu.DeleteQuiz(uint(quizID))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -87,9 +87,9 @@ func (qc *quizController) DeleteQuiz(c echo.Context) error {
 }
 
 func (qc *quizController) GetQuizAnswer(c echo.Context) error {
-	id := c.Param("quizId")
-	quizId, _ := strconv.Atoi(id)
-	ansRes, err := qc.qu.GetQuizAnswer(uint(quizId))
+	id := c.Param("quizID")
+	quizID, _ := strconv.Atoi(id)
+	ansRes, err := qc.qu.GetQuizAnswer(uint(quizID))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -97,15 +97,15 @@ func (qc *quizController) GetQuizAnswer(c echo.Context) error {
 }
 
 func (qc *quizController) CheckQuiz(c echo.Context) error {
-	id := c.Param("quizId")
-	quizId, _ := strconv.Atoi(id)
+	id := c.Param("quizID")
+	quizID, _ := strconv.Atoi(id)
 
 	x := c.QueryParam("x")
 	y := c.QueryParam("y")
 	ansX, _ := strconv.Atoi(x)
 	ansY, _ := strconv.Atoi(y)
 
-	checkAnsRes, err := qc.qu.CheckQuiz(uint(quizId), uint(ansX), uint(ansY))
+	checkAnsRes, err := qc.qu.CheckQuiz(uint(quizID), uint(ansX), uint(ansY))
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())

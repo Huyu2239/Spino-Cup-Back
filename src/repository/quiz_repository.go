@@ -11,10 +11,10 @@ import (
 
 type IQuizRepository interface {
 	GetFilteredQuizzes(quizzes *[]model.Quiz, filters []model.Filter) error
-	GetQuizByID(quiz *model.Quiz, quizId uint) error
+	GetQuizByID(quiz *model.Quiz, quizID uint) error
 	CreateQuiz(quiz *model.Quiz) error
-	UpdateQuiz(quiz *model.Quiz, quizId uint) error
-	DeleteQuiz(quizId uint) error
+	UpdateQuiz(quiz *model.Quiz, quizID uint) error
+	DeleteQuiz(quizID uint) error
 }
 
 type quizRepository struct {
@@ -40,8 +40,8 @@ func (qr *quizRepository) GetFilteredQuizzes(quizzes *[]model.Quiz, filters []mo
 	return nil
 }
 
-func (qr *quizRepository) GetQuizByID(quiz *model.Quiz, quizId uint) error {
-	if err := qr.db.Where("id=?", quizId).First(&quiz).Error; err != nil {
+func (qr *quizRepository) GetQuizByID(quiz *model.Quiz, quizID uint) error {
+	if err := qr.db.Where("id=?", quizID).First(&quiz).Error; err != nil {
 		return err
 	}
 	return nil
@@ -55,10 +55,10 @@ func (qr *quizRepository) CreateQuiz(quiz *model.Quiz) error {
 	return nil
 }
 
-func (qr *quizRepository) UpdateQuiz(quiz *model.Quiz, quizId uint) error {
+func (qr *quizRepository) UpdateQuiz(quiz *model.Quiz, quizID uint) error {
 
 	result := qr.db.Model(quiz).Clauses(clause.Returning{}).
-		Where("id=?", quizId).
+		Where("id=?", quizID).
 		Updates(map[string]interface{}{
 			"question":    quiz.Question,
 			"answer_x":    quiz.AnswerX,
@@ -78,8 +78,8 @@ func (qr *quizRepository) UpdateQuiz(quiz *model.Quiz, quizId uint) error {
 
 }
 
-func (qr *quizRepository) DeleteQuiz(quizId uint) error {
-	result := qr.db.Where("id=?", quizId).Delete(&model.Quiz{})
+func (qr *quizRepository) DeleteQuiz(quizID uint) error {
+	result := qr.db.Where("id=?", quizID).Delete(&model.Quiz{})
 	if result.Error != nil {
 		return result.Error
 	}

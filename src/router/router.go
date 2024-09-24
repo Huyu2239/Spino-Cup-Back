@@ -23,15 +23,15 @@ func NewRouter(qc controller.IQuizController, sc controller.IScoreController, uu
 	q := e.Group("/quizzes")
 	q.GET("", qc.GetFilteredQuizzes)
 	q.POST("", qc.CreateQuiz)
-	q.PUT("/:quizId", qc.UpdateQuiz)
-	q.DELETE("/:quizId", qc.DeleteQuiz)
-	q.GET("/ans/:quizId", qc.GetQuizAnswer)
-	q.GET("/check/:quizId", qc.CheckQuiz)
+	q.PUT("/:quizID", qc.UpdateQuiz)
+	q.DELETE("/:quizID", qc.DeleteQuiz)
+	q.GET("/ans/:quizID", qc.GetQuizAnswer)
+	q.GET("/check/:quizID", qc.CheckQuiz)
 
 	s := e.Group("/scores")
 	s.GET("", sc.GetFilteredScores)
 	s.POST("", sc.CreateScore)
-	s.DELETE("/:scoreId", sc.DeleteScore)
+	s.DELETE("/:scoreID", sc.DeleteScore)
 
 	return e
 }

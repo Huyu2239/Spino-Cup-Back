@@ -47,7 +47,7 @@ func (sc *scoreController) CreateScore(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	score.UserId = c.Get("user").(model.UserResponse).ID
+	score.UserID = c.Get("user").(model.UserResponse).ID
 
 	scoreRes, err := sc.su.CreateScore(score)
 	if err != nil {
@@ -57,9 +57,9 @@ func (sc *scoreController) CreateScore(c echo.Context) error {
 }
 
 func (sc *scoreController) DeleteScore(c echo.Context) error {
-	id := c.Param("scoreId")
-	scoreId, _ := strconv.Atoi(id)
-	err := sc.su.DeleteScore(uint(scoreId))
+	id := c.Param("scoreID")
+	scoreID, _ := strconv.Atoi(id)
+	err := sc.su.DeleteScore(uint(scoreID))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
