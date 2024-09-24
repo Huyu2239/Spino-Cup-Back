@@ -3,6 +3,7 @@ package usecase
 import (
 	"api/model"
 	"api/repository"
+	"math"
 )
 
 type IScoreUsecase interface {
@@ -36,6 +37,14 @@ func (su *scoreUsecase) GetFilteredScores(filters []model.Filter) ([]model.Score
 }
 
 func (su *scoreUsecase) CreateScore(score model.Score) (model.ScoreResponse, error) {
+
+	// ポイントを計算
+	penalty := 10 //ミスのペナルティ(秒数)
+	point := math.Pow(0.99, score.Time+float64(uint(penalty)*score.MissCount)) * 10000
+	roundedPoint := math.Round(point)
+
+	score.Point = uint(roundedPoint)
+
 	if err := su.sr.CreateScore(&score); err != nil {
 		return model.ScoreResponse{}, err
 	}
