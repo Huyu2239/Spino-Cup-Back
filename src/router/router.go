@@ -12,7 +12,13 @@ import (
 
 func NewRouter(qc controller.IQuizController, sc controller.IScoreController, uu usecase.IUserUsecase) *echo.Echo {
 	e := echo.New()
-
+	e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:5173"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept,
+			echo.HeaderAccessControlAllowHeaders, echo.HeaderXCSRFToken},
+		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE"},
+		AllowCredentials: true,
+	}))
 	if err := middleware.InitFirebase(); err != nil {
 		log.Fatalf("Failed to initialize Firebase: %v", err)
 	}
