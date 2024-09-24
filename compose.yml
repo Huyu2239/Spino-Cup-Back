@@ -1,0 +1,9 @@
+services:
+  api:
+    build:
+      dockerfile: ./build/Dockerfile
+      context: .
+    ports:
+      - "1323:1323"
+    env_file:
+      - .env
