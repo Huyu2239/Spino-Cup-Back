@@ -10,14 +10,9 @@ import (
 
 func main() {
 	db := db.NewDB()
-	userRepository := repository.NewUserRepository(db)
 	quizRepository := repository.NewQuizRepository(db)
-	scoreRepository := repository.NewScoreRepository(db)
-	userUsecase := usecase.NewUserUsecase(userRepository)
 	quizUsecase := usecase.NewQuizUsecase(quizRepository)
-	scoreUsecase := usecase.NewScoreUsecase(scoreRepository)
 	quizController := controller.NewQuizContoller(quizUsecase)
-	scoreController := controller.NewScoreContoller(scoreUsecase)
-	e := router.NewRouter(quizController, scoreController, userUsecase)
+	e := router.NewRouter(quizController)
 	e.Logger.Fatal(e.Start(":1323"))
 }
