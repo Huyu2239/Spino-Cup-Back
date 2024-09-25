@@ -11,6 +11,7 @@ import (
 
 type IQuizRepository interface {
 	GetFilteredQuizzes(quizzes *[]model.Quiz, filters []model.Filter) error
+	GetAllLanguages(languages *[]string) error
 	GetQuizByID(quiz *model.Quiz, quizID uint) error
 	CreateQuiz(quiz *model.Quiz) error
 	UpdateQuiz(quiz *model.Quiz, quizID uint) error
@@ -27,8 +28,7 @@ func NewQuizRepository(db *gorm.DB) IQuizRepository {
 
 func (qr *quizRepository) GetFilteredQuizzes(quizzes *[]model.Quiz, filters []model.Filter) error {
 
-	dbUser := qr.db.Joins("User")
-	db, err := applyFilters(dbUser, filters)
+	db, err := applyFilters(qr.db, filters)
 
 	if err != nil {
 		return err
@@ -42,6 +42,13 @@ func (qr *quizRepository) GetFilteredQuizzes(quizzes *[]model.Quiz, filters []mo
 
 func (qr *quizRepository) GetQuizByID(quiz *model.Quiz, quizID uint) error {
 	if err := qr.db.Where("id=?", quizID).First(&quiz).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (qr *quizRepository) GetAllLanguages(languages *[]string) error {
+	if err := qr.db.Model(&model.Quiz{}).Distinct("language").Pluck("language", &languages).Error; err != nil {
 		return err
 	}
 	return nil
@@ -63,6 +70,7 @@ func (qr *quizRepository) UpdateQuiz(quiz *model.Quiz, quizID uint) error {
 			"question":    quiz.Question,
 			"answer_x":    quiz.AnswerX,
 			"answer_y":    quiz.AnswerY,
+			"edited_text": quiz.EditedText,
 			"difficulty":  quiz.Difficulty,
 			"language":    quiz.Language,
 			"explanation": quiz.Explanation,

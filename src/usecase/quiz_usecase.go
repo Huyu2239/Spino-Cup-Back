@@ -7,11 +7,12 @@ import (
 
 type IQuizUsecase interface {
 	GetFilteredQuizzes(filters []model.Filter) ([]model.QuizResponse, error)
+	GetAllLanguages() (model.LanguageResponse, error)
 	CreateQuiz(quiz model.Quiz) (model.QuizResponse, error)
 	UpdateQuiz(quiz model.Quiz, quizID uint) (model.QuizResponse, error)
 	DeleteQuiz(quizID uint) error
 	GetQuizAnswer(quizID uint) (model.AnswerResponse, error)
-	CheckQuiz(quizID uint, ansX uint, ansY uint) (model.CheckResponse, error)
+	CheckQuiz(quizID uint, ansX uint, ansY uint, editedText string) (model.CheckResponse, error)
 }
 
 type quizUsecase struct {
@@ -38,6 +39,17 @@ func (qu *quizUsecase) GetFilteredQuizzes(filters []model.Filter) ([]model.QuizR
 		resQuizzes = append(resQuizzes, q)
 	}
 	return resQuizzes, nil
+}
+
+func (qu *quizUsecase) GetAllLanguages() (model.LanguageResponse, error) {
+	languages := []string{}
+	if err := qu.qr.GetAllLanguages(&languages); err != nil {
+		return model.LanguageResponse{}, err
+	}
+	resLanguages := model.LanguageResponse{
+		Languages: languages,
+	}
+	return resLanguages, nil
 }
 
 func (qu *quizUsecase) CreateQuiz(quiz model.Quiz) (model.QuizResponse, error) {
@@ -84,18 +96,19 @@ func (qu *quizUsecase) GetQuizAnswer(quizID uint) (model.AnswerResponse, error) 
 		AnswerX:     quiz.AnswerX,
 		AnswerY:     quiz.AnswerY,
 		Explanation: quiz.Explanation,
+		EditedText:  quiz.EditedText,
 	}
 
 	return resAns, nil
 }
 
-func (qu *quizUsecase) CheckQuiz(quizID uint, ansX uint, ansY uint) (model.CheckResponse, error) {
+func (qu *quizUsecase) CheckQuiz(quizID uint, ansX uint, ansY uint, editedText string) (model.CheckResponse, error) {
 	quiz := model.Quiz{}
 	if err := qu.qr.GetQuizByID(&quiz, quizID); err != nil {
 		return model.CheckResponse{}, err
 	}
 
-	if quiz.AnswerX == ansX && quiz.AnswerY == ansY {
+	if quiz.AnswerX == ansX && quiz.AnswerY == ansY && quiz.EditedText == editedText {
 		return model.CheckResponse{ID: quizID, IsCorrect: true}, nil
 	}
 
