@@ -29,6 +29,8 @@ func NewQuizContoller(qu usecase.IQuizUsecase) IQuizController {
 
 func (qc *quizController) GetFilteredQuizzes(c echo.Context) error {
 	queryFilters := c.QueryParam("filters")
+	queryLimit := c.QueryParam("limit")
+	queryRandom := c.QueryParam("random")
 
 	filters, err := parseFilters(queryFilters)
 
@@ -36,7 +38,15 @@ func (qc *quizController) GetFilteredQuizzes(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	quizRes, err := qc.qu.GetFilteredQuizzes(filters)
+	limit, _ := strconv.Atoi(queryLimit)
+	randomInt, _ := strconv.Atoi(queryRandom)
+	random := false
+
+	if randomInt == 1 {
+		random = true
+	}
+
+	quizRes, err := qc.qu.GetFilteredQuizzes(filters, limit, random)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())

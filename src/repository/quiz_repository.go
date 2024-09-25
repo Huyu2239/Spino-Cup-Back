@@ -10,7 +10,7 @@ import (
 )
 
 type IQuizRepository interface {
-	GetFilteredQuizzes(quizzes *[]model.Quiz, filters []model.Filter) error
+	GetFilteredQuizzes(quizzes *[]model.Quiz, filters []model.Filter, limit int, random bool) error
 	GetAllLanguages(languages *[]string) error
 	GetQuizByID(quiz *model.Quiz, quizID uint) error
 	CreateQuiz(quiz *model.Quiz) error
@@ -26,7 +26,7 @@ func NewQuizRepository(db *gorm.DB) IQuizRepository {
 	return &quizRepository{db}
 }
 
-func (qr *quizRepository) GetFilteredQuizzes(quizzes *[]model.Quiz, filters []model.Filter) error {
+func (qr *quizRepository) GetFilteredQuizzes(quizzes *[]model.Quiz, filters []model.Filter, limit int, random bool) error {
 
 	db, err := applyFilters(qr.db, filters)
 
@@ -34,7 +34,17 @@ func (qr *quizRepository) GetFilteredQuizzes(quizzes *[]model.Quiz, filters []mo
 		return err
 	}
 
-	if err := db.Order("created_at").Find(quizzes).Error; err != nil {
+	if limit <= 0 {
+		limit = 10
+	}
+
+	if random {
+		db = db.Order("RANDOM()")
+	} else {
+		db = db.Order("created_at")
+	}
+
+	if err := db.Limit(int(limit)).Find(quizzes).Error; err != nil {
 		return err
 	}
 	return nil

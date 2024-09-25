@@ -6,7 +6,7 @@ import (
 )
 
 type IQuizUsecase interface {
-	GetFilteredQuizzes(filters []model.Filter) ([]model.QuizResponse, error)
+	GetFilteredQuizzes(filters []model.Filter, limit int, random bool) ([]model.QuizResponse, error)
 	GetAllLanguages() (model.LanguageResponse, error)
 	CreateQuiz(quiz model.Quiz) (model.QuizResponse, error)
 	UpdateQuiz(quiz model.Quiz, quizID uint) (model.QuizResponse, error)
@@ -23,9 +23,9 @@ func NewQuizUsecase(qr repository.IQuizRepository) IQuizUsecase {
 	return &quizUsecase{qr}
 }
 
-func (qu *quizUsecase) GetFilteredQuizzes(filters []model.Filter) ([]model.QuizResponse, error) {
+func (qu *quizUsecase) GetFilteredQuizzes(filters []model.Filter, limit int, random bool) ([]model.QuizResponse, error) {
 	quizzes := []model.Quiz{}
-	if err := qu.qr.GetFilteredQuizzes(&quizzes, filters); err != nil {
+	if err := qu.qr.GetFilteredQuizzes(&quizzes, filters, limit, random); err != nil {
 		return nil, err
 	}
 	resQuizzes := []model.QuizResponse{}
