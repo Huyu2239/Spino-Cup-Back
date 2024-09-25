@@ -7,12 +7,9 @@ import (
 
 type IQuizUsecase interface {
 	GetFilteredQuizzes(filters []model.Filter, limit int, random bool) ([]model.QuizResponse, error)
-	GetAllLanguages() (model.LanguageResponse, error)
-	CreateQuiz(quiz model.Quiz) (model.QuizResponse, error)
-	UpdateQuiz(quiz model.Quiz, quizID uint) (model.QuizResponse, error)
+	CreateQuiz(quiz model.Quiz2) (model.QuizResponse, error)
+	UpdateQuiz(quiz model.Quiz2, quizID uint) (model.QuizResponse, error)
 	DeleteQuiz(quizID uint) error
-	GetQuizAnswer(quizID uint) (model.AnswerResponse, error)
-	CheckQuiz(quizID uint, ansX uint, ansY uint, editedText string) (model.CheckResponse, error)
 }
 
 type quizUsecase struct {
@@ -24,57 +21,55 @@ func NewQuizUsecase(qr repository.IQuizRepository) IQuizUsecase {
 }
 
 func (qu *quizUsecase) GetFilteredQuizzes(filters []model.Filter, limit int, random bool) ([]model.QuizResponse, error) {
-	quizzes := []model.Quiz{}
+	quizzes := []model.Quiz2{}
 	if err := qu.qr.GetFilteredQuizzes(&quizzes, filters, limit, random); err != nil {
 		return nil, err
 	}
 	resQuizzes := []model.QuizResponse{}
 	for _, v := range quizzes {
 		q := model.QuizResponse{
-			ID:         v.ID,
-			Question:   v.Question,
-			Difficulty: v.Difficulty,
-			Language:   v.Language,
+			ID:           v.ID,
+			Question:     v.Question,
+			Code:         v.Code,
+			InputSample:  v.InputSample,
+			OutputSample: v.OutputSample,
+			InputSecret:  v.InputSecret,
+			OutputSecret: v.OutputSecret,
 		}
 		resQuizzes = append(resQuizzes, q)
 	}
 	return resQuizzes, nil
 }
 
-func (qu *quizUsecase) GetAllLanguages() (model.LanguageResponse, error) {
-	languages := []string{}
-	if err := qu.qr.GetAllLanguages(&languages); err != nil {
-		return model.LanguageResponse{}, err
-	}
-	resLanguages := model.LanguageResponse{
-		Languages: languages,
-	}
-	return resLanguages, nil
-}
-
-func (qu *quizUsecase) CreateQuiz(quiz model.Quiz) (model.QuizResponse, error) {
+func (qu *quizUsecase) CreateQuiz(quiz model.Quiz2) (model.QuizResponse, error) {
 	if err := qu.qr.CreateQuiz(&quiz); err != nil {
 		return model.QuizResponse{}, err
 	}
 	resQuiz := model.QuizResponse{
-		ID:         quiz.ID,
-		Question:   quiz.Question,
-		Difficulty: quiz.Difficulty,
-		Language:   quiz.Language,
+		ID:           quiz.ID,
+		Question:     quiz.Question,
+		Code:         quiz.Code,
+		InputSample:  quiz.InputSample,
+		OutputSample: quiz.OutputSample,
+		InputSecret:  quiz.InputSecret,
+		OutputSecret: quiz.OutputSecret,
 	}
 	return resQuiz, nil
 }
 
-func (qu *quizUsecase) UpdateQuiz(quiz model.Quiz, quizID uint) (model.QuizResponse, error) {
+func (qu *quizUsecase) UpdateQuiz(quiz model.Quiz2, quizID uint) (model.QuizResponse, error) {
 	if err := qu.qr.UpdateQuiz(&quiz, quizID); err != nil {
 		return model.QuizResponse{}, err
 	}
 
 	resQuiz := model.QuizResponse{
-		ID:         quiz.ID,
-		Question:   quiz.Question,
-		Difficulty: quiz.Difficulty,
-		Language:   quiz.Language,
+		ID:           quiz.ID,
+		Question:     quiz.Question,
+		Code:         quiz.Code,
+		InputSample:  quiz.InputSample,
+		OutputSample: quiz.OutputSample,
+		InputSecret:  quiz.InputSecret,
+		OutputSecret: quiz.OutputSecret,
 	}
 	return resQuiz, nil
 }
@@ -84,33 +79,4 @@ func (qu *quizUsecase) DeleteQuiz(quizID uint) error {
 		return err
 	}
 	return nil
-}
-
-func (qu *quizUsecase) GetQuizAnswer(quizID uint) (model.AnswerResponse, error) {
-	quiz := model.Quiz{}
-	if err := qu.qr.GetQuizByID(&quiz, quizID); err != nil {
-		return model.AnswerResponse{}, err
-	}
-	resAns := model.AnswerResponse{
-		ID:          quiz.ID,
-		AnswerX:     quiz.AnswerX,
-		AnswerY:     quiz.AnswerY,
-		Explanation: quiz.Explanation,
-		EditedText:  quiz.EditedText,
-	}
-
-	return resAns, nil
-}
-
-func (qu *quizUsecase) CheckQuiz(quizID uint, ansX uint, ansY uint, editedText string) (model.CheckResponse, error) {
-	quiz := model.Quiz{}
-	if err := qu.qr.GetQuizByID(&quiz, quizID); err != nil {
-		return model.CheckResponse{}, err
-	}
-
-	if quiz.AnswerX == ansX && quiz.AnswerY == ansY && quiz.EditedText == editedText {
-		return model.CheckResponse{ID: quizID, IsCorrect: true}, nil
-	}
-
-	return model.CheckResponse{ID: quizID, IsCorrect: false}, nil
 }
