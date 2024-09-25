@@ -24,20 +24,21 @@ func NewRouter(qc controller.IQuizController, sc controller.IScoreController, uu
 	}
 	e.Use(echomiddleware.Logger())
 	e.Use(echomiddleware.Recover())
-	e.Use(middleware.AuthMiddleware(uu))
+	//e.Use(middleware.AuthMiddleware(uu))
 
 	q := e.Group("/quizzes")
 	q.GET("", qc.GetFilteredQuizzes)
+	q.GET("/languages", qc.GetAllLanguages)
 	q.POST("", qc.CreateQuiz)
 	q.PUT("/:quizID", qc.UpdateQuiz)
 	q.DELETE("/:quizID", qc.DeleteQuiz)
 	q.GET("/ans/:quizID", qc.GetQuizAnswer)
 	q.GET("/check/:quizID", qc.CheckQuiz)
 
-	s := e.Group("/scores")
-	s.GET("", sc.GetFilteredScores)
-	s.POST("", sc.CreateScore)
-	s.DELETE("/:scoreID", sc.DeleteScore)
+	// s := e.Group("/scores")
+	// s.GET("", sc.GetFilteredScores)
+	// s.POST("", sc.CreateScore)
+	// s.DELETE("/:scoreID", sc.DeleteScore)
 
 	return e
 }

@@ -20,13 +20,12 @@ func (sm StringMatrix) Value() (driver.Value, error) {
 
 type Quiz struct {
 	ID          uint         `json:"id" gorm:"primaryKey"`
-	UserID      uint         `json:"user_id" gorm:"not null"`
-	User        User         `json:"user" gorm:"foreignKey:UserID; constraint:OnDelete:CASCADE"`
 	Difficulty  string       `json:"difficulty"`                  //難易度
 	Language    string       `json:"language"`                    //クイズに使用されているプログラミング言語
 	Question    StringMatrix `json:"question" grom:"not null"`    //内容
 	AnswerX     uint         `json:"answer_x" gorm:"not null;"`   //正解のx座標
 	AnswerY     uint         `json:"answer_y" gorm:"not null;"`   //正解のy座標
+	EditedText  string       `json:"edited_text"`                 //編集した内容
 	Explanation string       `json:"explanation" gorm:"not null"` //解説
 
 	CreatedAt time.Time `json:"created_at"`
@@ -49,5 +48,10 @@ type AnswerResponse struct {
 	ID          uint   `json:"id" gorm:"primaryKey"`
 	AnswerX     uint   `json:"answer_x" gorm:"not null;"` //正解のx座標
 	AnswerY     uint   `json:"answer_y" gorm:"not null;"` //正解のy座標
+	EditedText  string `json:"edited_text"`
 	Explanation string `json:"explanation" gorm:"not null"`
+}
+
+type LanguageResponse struct {
+	Languages []string `json:"languages"`
 }

@@ -10,7 +10,8 @@ import (
 )
 
 type IQuizRepository interface {
-	GetFilteredQuizzes(quizzes *[]model.Quiz, filters []model.Filter) error
+	GetFilteredQuizzes(quizzes *[]model.Quiz, filters []model.Filter, limit int, random bool) error
+	GetAllLanguages(languages *[]string) error
 	GetQuizByID(quiz *model.Quiz, quizID uint) error
 	CreateQuiz(quiz *model.Quiz) error
 	UpdateQuiz(quiz *model.Quiz, quizID uint) error
@@ -25,16 +26,25 @@ func NewQuizRepository(db *gorm.DB) IQuizRepository {
 	return &quizRepository{db}
 }
 
-func (qr *quizRepository) GetFilteredQuizzes(quizzes *[]model.Quiz, filters []model.Filter) error {
+func (qr *quizRepository) GetFilteredQuizzes(quizzes *[]model.Quiz, filters []model.Filter, limit int, random bool) error {
 
-	dbUser := qr.db.Joins("User")
-	db, err := applyFilters(dbUser, filters)
+	db, err := applyFilters(qr.db, filters)
 
 	if err != nil {
 		return err
 	}
 
-	if err := db.Order("created_at").Find(quizzes).Error; err != nil {
+	if limit <= 0 {
+		limit = 10
+	}
+
+	if random {
+		db = db.Order("RANDOM()")
+	} else {
+		db = db.Order("created_at")
+	}
+
+	if err := db.Limit(int(limit)).Find(quizzes).Error; err != nil {
 		return err
 	}
 	return nil
@@ -42,6 +52,13 @@ func (qr *quizRepository) GetFilteredQuizzes(quizzes *[]model.Quiz, filters []mo
 
 func (qr *quizRepository) GetQuizByID(quiz *model.Quiz, quizID uint) error {
 	if err := qr.db.Where("id=?", quizID).First(&quiz).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (qr *quizRepository) GetAllLanguages(languages *[]string) error {
+	if err := qr.db.Model(&model.Quiz{}).Distinct("language").Pluck("language", &languages).Error; err != nil {
 		return err
 	}
 	return nil
@@ -63,6 +80,7 @@ func (qr *quizRepository) UpdateQuiz(quiz *model.Quiz, quizID uint) error {
 			"question":    quiz.Question,
 			"answer_x":    quiz.AnswerX,
 			"answer_y":    quiz.AnswerY,
+			"edited_text": quiz.EditedText,
 			"difficulty":  quiz.Difficulty,
 			"language":    quiz.Language,
 			"explanation": quiz.Explanation,

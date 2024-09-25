@@ -11,6 +11,7 @@ import (
 
 type IQuizController interface {
 	GetFilteredQuizzes(c echo.Context) error
+	GetAllLanguages(c echo.Context) error
 	CreateQuiz(c echo.Context) error
 	UpdateQuiz(c echo.Context) error
 	DeleteQuiz(c echo.Context) error
@@ -28,6 +29,8 @@ func NewQuizContoller(qu usecase.IQuizUsecase) IQuizController {
 
 func (qc *quizController) GetFilteredQuizzes(c echo.Context) error {
 	queryFilters := c.QueryParam("filters")
+	queryLimit := c.QueryParam("limit")
+	queryRandom := c.QueryParam("random")
 
 	filters, err := parseFilters(queryFilters)
 
@@ -35,7 +38,15 @@ func (qc *quizController) GetFilteredQuizzes(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	quizRes, err := qc.qu.GetFilteredQuizzes(filters)
+	limit, _ := strconv.Atoi(queryLimit)
+	randomInt, _ := strconv.Atoi(queryRandom)
+	random := false
+
+	if randomInt == 1 {
+		random = true
+	}
+
+	quizRes, err := qc.qu.GetFilteredQuizzes(filters, limit, random)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -44,13 +55,21 @@ func (qc *quizController) GetFilteredQuizzes(c echo.Context) error {
 	return c.JSON(http.StatusOK, quizRes)
 }
 
+func (qc *quizController) GetAllLanguages(c echo.Context) error {
+	languageRes, err := qc.qu.GetAllLanguages()
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, languageRes)
+}
+
 func (qc *quizController) CreateQuiz(c echo.Context) error {
 	quiz := model.Quiz{}
 	if err := c.Bind(&quiz); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-
-	quiz.UserID = c.Get("user").(model.UserResponse).ID
 
 	quizRes, err := qc.qu.CreateQuiz(quiz)
 	if err != nil {
@@ -64,8 +83,6 @@ func (qc *quizController) UpdateQuiz(c echo.Context) error {
 	if err := c.Bind(&quiz); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-
-	quiz.UserID = c.Get("user").(model.UserResponse).ID
 
 	id := c.Param("quizID")
 	quizID, _ := strconv.Atoi(id)
@@ -105,7 +122,8 @@ func (qc *quizController) CheckQuiz(c echo.Context) error {
 	ansX, _ := strconv.Atoi(x)
 	ansY, _ := strconv.Atoi(y)
 
-	checkAnsRes, err := qc.qu.CheckQuiz(uint(quizID), uint(ansX), uint(ansY))
+	editedText := c.QueryParam("editedText")
+	checkAnsRes, err := qc.qu.CheckQuiz(uint(quizID), uint(ansX), uint(ansY), editedText)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
