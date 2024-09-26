@@ -28,13 +28,14 @@ func (qu *quizUsecase) GetFilteredQuizzes(filters []model.Filter, limit int, ran
 	resQuizzes := []model.QuizResponse{}
 	for _, v := range quizzes {
 		q := model.QuizResponse{
-			ID:           v.ID,
-			Question:     v.Question,
-			Code:         v.Code,
-			InputSample:  v.InputSample,
-			OutputSample: v.OutputSample,
-			InputSecret:  v.InputSecret,
-			OutputSecret: v.OutputSecret,
+			ID:            v.ID,
+			Question:      v.Question,
+			Code:          v.Code,
+			InCorrectCode: v.InCorrectCode,
+			InputSample:   v.InputSample,
+			OutputSample:  v.OutputSample,
+			InputSecret:   v.InputSecret,
+			OutputSecret:  v.OutputSecret,
 		}
 		resQuizzes = append(resQuizzes, q)
 	}
