@@ -46,13 +46,14 @@ func (qu *quizUsecase) CreateQuiz(quiz model.Quiz2) (model.QuizResponse, error) 
 		return model.QuizResponse{}, err
 	}
 	resQuiz := model.QuizResponse{
-		ID:           quiz.ID,
-		Question:     quiz.Question,
-		Code:         quiz.Code,
-		InputSample:  quiz.InputSample,
-		OutputSample: quiz.OutputSample,
-		InputSecret:  quiz.InputSecret,
-		OutputSecret: quiz.OutputSecret,
+		ID:            quiz.ID,
+		Question:      quiz.Question,
+		Code:          quiz.Code,
+		InCorrectCode: quiz.InCorrectCode,
+		InputSample:   quiz.InputSample,
+		OutputSample:  quiz.OutputSample,
+		InputSecret:   quiz.InputSecret,
+		OutputSecret:  quiz.OutputSecret,
 	}
 	return resQuiz, nil
 }
@@ -63,13 +64,14 @@ func (qu *quizUsecase) UpdateQuiz(quiz model.Quiz2, quizID uint) (model.QuizResp
 	}
 
 	resQuiz := model.QuizResponse{
-		ID:           quiz.ID,
-		Question:     quiz.Question,
-		Code:         quiz.Code,
-		InputSample:  quiz.InputSample,
-		OutputSample: quiz.OutputSample,
-		InputSecret:  quiz.InputSecret,
-		OutputSecret: quiz.OutputSecret,
+		ID:            quiz.ID,
+		Question:      quiz.Question,
+		InCorrectCode: quiz.InCorrectCode,
+		Code:          quiz.Code,
+		InputSample:   quiz.InputSample,
+		OutputSample:  quiz.OutputSample,
+		InputSecret:   quiz.InputSecret,
+		OutputSecret:  quiz.OutputSecret,
 	}
 	return resQuiz, nil
 }
