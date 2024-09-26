@@ -10,7 +10,7 @@ import (
 func NewRouter(qc controller.IQuizController) *echo.Echo {
 	e := echo.New()
 	e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:5173"},
+		AllowOrigins: []string{"http://localhost:5173", "http://localhost", "http://spino.huyu2239.work"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept,
 			echo.HeaderAccessControlAllowHeaders, echo.HeaderXCSRFToken},
 		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE"},
