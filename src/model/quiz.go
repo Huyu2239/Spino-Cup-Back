@@ -21,7 +21,7 @@ type QuizResponse struct {
 	ID            uint   `json:"id" gorm:"primaryKey"`
 	Question      string `json:"question" grom:"not null;"`
 	Code          string `json:"code" gorm:"not null"`
-	InCorrectCode string `json:"incorrect_code`
+	InCorrectCode string `json:"incorrect_code"`
 	InputSample   string `json:"input_sample"`
 	OutputSample  string `json:"output_sample"`
 	InputSecret   string `json:"input_secret"`
